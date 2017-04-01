@@ -1,6 +1,11 @@
 # silly macOS
 .DS_Store
 
+# vim temp files
+*~
+*.swp
+*.swo
+
 # build files
 build/
 
