@@ -41,7 +41,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   rmse = rmse.array().sqrt();
 
   return rmse;
-
+}
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   /**
@@ -63,7 +63,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
   //check division by zero
   if (fabs(c1) < 0.0001) {
-    std::cout << "CalculateJacobian() Error - Division by zero" << endl;
+    std::cout << "CalculateJacobian() Error - Division by zero" << std::endl;
     return Hj;
   }
 
