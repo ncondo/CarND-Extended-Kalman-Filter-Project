@@ -47,22 +47,31 @@ FusionEKF::FusionEKF() {
          1, 1, 1, 1;
 
   //state covariance matrix P
-  ekf_.P_ = MatrixXd(4, 4);
-  ekf_.P_ << 1, 0, 0, 0,
-             0, 1, 0, 0,
-             0, 0, 1000, 0,
-             0, 0, 0, 1000;
+  MatrixXd  P_ = MatrixXd(4, 4);
+  P_ << 1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1000, 0,
+        0, 0, 0, 1000;
+
+  //process covariance matrix Q
+  MatrixXd Q_ = MatrixXd(4, 4);
 
   //initial transition matrix F_
-  ekf_.F_ = MatrixXd(4, 4);
-  ekf_.F_ << 1, 0, 1, 0,
-             0, 1, 0, 1,
-             0, 0, 1, 0,
-             0, 0, 0, 1;
+  MatrixXd F_ = MatrixXd(4, 4);
+  F_ << 1, 0, 1, 0,
+        0, 1, 0, 1,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
 
   //acceleration noise components
   noise_ax = 9;
   noise_ay = 9;
+
+  //create a 4D state vector
+  VectorXd x_ = VectorXd(4);
+
+  ekf_.Init(x_, P_, F_, H_laser_, R_laser_, Q_);
+
 }
 
 /**
@@ -85,7 +94,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     */
     // first measurement
     cout << "EKF: " << endl;
-    ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
@@ -139,7 +147,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   ekf_.F_(1, 3) = dt;
 
   //set the process covariance matrix Q
-  ekf_.Q_ = Matrix(4, 4);
   ekf_.Q_ << dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
              0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
              dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
